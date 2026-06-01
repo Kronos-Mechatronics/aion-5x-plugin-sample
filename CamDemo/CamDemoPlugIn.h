@@ -2,12 +2,13 @@
 //
 
 #pragma once
+#include "AionSDK.h"
 
 // CCamDemoPlugIn
 // See CamDemoPlugIn.cpp for the implementation of this class
 //
 
-class CCamDemoPlugIn : public CRhinoUtilityPlugIn
+class CCamDemoPlugIn : public Aion::CAionCamPlugIn
 {
 public:
   // CCamDemoPlugIn constructor. The constructor is called when the
@@ -54,6 +55,8 @@ public:
   // view at this time. Thus, you should only be manipulating your own objects.
   // or tools here.  
   void OnUnloadPlugIn() override;
+
+  std::vector<Aion::CamBase*> getCamBlockTypes() override;
 
 private:
   ON_wString m_plugin_version;
