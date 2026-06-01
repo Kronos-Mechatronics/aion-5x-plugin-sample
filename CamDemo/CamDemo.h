@@ -20,4 +20,12 @@ public:
 
     // generate Toolpath of the contour CAM block
     bool generateToolpath(const Aion::DrawingConfig* config, Aion::Errorlist& errors) override;
+    // Expose options of this cam block to UI
+    Aion::OptionsGroups getOptionsByGroup() override;
+
+private:
+    // Config option for the tool
+    Aion::ConfigOptionTool* m_tool;
+    // Selected curve geometries
+    Aion::ConfigOptionComponentVector* m_curves;
 };
