@@ -5,6 +5,7 @@
 #include "rhinoSdkPlugInDeclare.h"
 #include "CamDemoPlugIn.h"
 #include "Resource.h"
+#include "CamDemo.h"
 
 // The plug-in object must be constructed before any plug-in classes derived
 // from CRhinoCommand. The #pragma init_seg(lib) ensures that this happens.
@@ -154,6 +155,7 @@ void CCamDemoPlugIn::OnUnloadPlugIn()
 std::vector<Aion::CamBase*> CCamDemoPlugIn::getCamBlockTypes()
 {
 	std::vector<Aion::CamBase*> result;
+	result.emplace_back(new CamDemo(PlugInID()));
 	return result;
 }
 

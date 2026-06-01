@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="CamDemo.cpp" />
     <ClCompile Include="cmdCamDemo.cpp" />
     <ClCompile Include="CamDemoApp.cpp" />
     <ClCompile Include="CamDemoPlugIn.cpp" />
@@ -20,6 +21,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CamDemo.h" />
     <ClInclude Include="CamDemoApp.h" />
     <ClInclude Include="CamDemoPlugIn.h" />
     <ClInclude Include="Resource.h" />
