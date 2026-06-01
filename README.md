@@ -13,6 +13,7 @@ Example directory tree:
 │   ├── Aion-5X-SDK
 │   │   ├── include\
 │   │   ├── lib\
+│   │   ├── PropertySheets\
 │   ├── aion-5x-plugin-sample\
 │   │   ├── CamDemo\
 │   │   ├── CamDemo.sln
