@@ -22,6 +22,8 @@ public:
     bool generateToolpath(const Aion::DrawingConfig* config, Aion::Errorlist& errors) override;
     // Expose options of this cam block to UI
     Aion::OptionsGroups getOptionsByGroup() override;
+    // callback for when an option was changed in the UI.
+    void onOptionChanged(const Aion::ConfigOptionBase* option, bool reset = false) override;
 
 private:
     // Config option for the tool

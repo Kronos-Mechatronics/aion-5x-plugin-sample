@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "CamDemo.h"
+#include "InteractiveSelection.h"
 
 CamDemo::CamDemo(const ON_UUID& plugin_uuid)
     : CamBase("Unnamed CamDemo",                                    // Default name of this cam block, as displayed in the list.
@@ -53,4 +54,16 @@ Aion::OptionsGroups CamDemo::getOptionsByGroup()
     }
 
     return result;
+}
+
+void CamDemo::onOptionChanged(const Aion::ConfigOptionBase* option, bool reset)
+{
+    // Set the recalculate flag
+    setNeedsPathplanning();
+
+    if (option == m_curves && !reset) {
+        std::vector<Aion::Component>* components = m_curves->getComponents();
+        // Select curves
+        Aion::InteractiveSelection::interactiveCurveSelection(*components);
+    }
 }
