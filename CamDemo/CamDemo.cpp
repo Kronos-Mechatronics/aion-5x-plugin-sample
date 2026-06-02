@@ -67,3 +67,27 @@ void CamDemo::onOptionChanged(const Aion::ConfigOptionBase* option, bool reset)
         Aion::InteractiveSelection::interactiveCurveSelection(*components);
     }
 }
+
+void CamDemo::onObjectChanged(const ON_UUID& uuid, ON::object_type type, bool deleted)
+{
+    bool change = false;
+    // Check if the modified object is part of m_curves.
+    // If it is deleted we also delete it from the list.
+    if (type == ON::curve_object || type == ON::instance_reference) {
+        for (auto it = m_curves->getComponents()->begin(); it != m_curves->getComponents()->end();) {
+            if (it->uuid == uuid) {
+                change = true;
+                if (deleted) {
+                    it = m_curves->getComponents()->erase(it);
+                    continue; // continue to the next iteration
+                }
+            }
+            it++;
+        }
+    }
+
+    // Set recalculate flag if we are affected by this object change
+    if (change) {
+        setNeedsPathplanning(true);
+    }
+}

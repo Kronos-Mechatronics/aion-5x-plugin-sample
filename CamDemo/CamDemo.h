@@ -24,6 +24,8 @@ public:
     Aion::OptionsGroups getOptionsByGroup() override;
     // callback for when an option was changed in the UI.
     void onOptionChanged(const Aion::ConfigOptionBase* option, bool reset = false) override;
+    // Respond to modified geometry in the document
+    void onObjectChanged(const ON_UUID& uuid, ON::object_type type, bool deleted) override;
 
 private:
     // Config option for the tool
