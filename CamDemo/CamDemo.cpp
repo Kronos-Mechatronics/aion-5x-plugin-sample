@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "CamDemo.h"
 #include "InteractiveSelection.h"
+#include "Geometry5X.h"
 
 CamDemo::CamDemo(const ON_UUID& plugin_uuid)
     : CamBase("Unnamed CamDemo",                                    // Default name of this cam block, as displayed in the list.
@@ -33,8 +34,74 @@ Aion::CamBase* CamDemo::createNewInstance() const
 
 bool CamDemo::generateToolpath(const Aion::DrawingConfig* config, Aion::Errorlist& errors)
 {
-    errors.push_back(Aion::Error(Aion::ErrorClass::Info, "CamDemo is not implemented"));
-    return false;
+    // clear existing paths
+    m_toolpaths.clear();
+
+    // Check if a tool is specified
+    // Note: we can return three error levels here:
+    // Critical: something is wrong, toolpath can not be generated.
+    // Warning: something is missing, toolpath can not be generated, but this is not a real error. E.g. no tool selected.
+    // Info: information, e.g. no geometry selected. The resulting toolpath is valid, but may be empty.
+    if (m_tool->getString().empty()) {
+        errors.push_back(Aion::Error(Aion::ErrorClass::Warning, "No tool specified"));
+        // No valid result, return false -> gcode export not possible
+        return false;
+    }
+
+    // Check if input geometry is specified.
+    if (m_curves->getComponents()->empty()) {
+        errors.push_back(Aion::Error(Aion::ErrorClass::Info, "No geometry selected"));
+        // Valid (but empty) result, return true -> gcode export possible
+        return true;
+    }
+
+    // Get the tool config to to access tool specific parameters
+    const Aion::ToolConfig* tool_config = config->getTool(m_tool->getString());
+    if (!tool_config) {
+        errors.push_back(Aion::Error(Aion::ErrorClass::Critical, "Tool not found in config"));
+        // No valid result, return false -> gcode export not possible
+        return false;
+    }
+
+    // Compute a set of toolpaths objects from input geometry.
+    for (const Aion::Component& comp : *m_curves->getComponents()) {
+        // Loop over each curve
+        ON_PolylineCurve pline;
+        ON_Polyline pl;
+
+        // Try to extract a polyline (sequence of linear segments) from the curve.
+        if (Aion::Geometry5X::getPolylineCurveFromComponent(comp, pline, config->machineConfig().path_deviation_tolerance())) {
+            pl = pline.m_pline;
+            // Return when polyline is invalid or has a length of 0
+            if (!pl.IsValid() || pl.Count() == 0) {
+                errors.push_back(Aion::Error(Aion::ErrorClass::Warning, "Polyline is invalid or has a length of 0"));
+                return false;
+            }
+        } else {
+            // Throw an error if the object is not a polyline
+            errors.push_back(Aion::Error(Aion::ErrorClass::Critical, "Object can not be converted to polyline"));
+            return false;
+        }
+
+        // Create a new toolpath path
+        Aion::ToolpathPath* path = new Aion::ToolpathPath(tool_config);
+
+        // Add all curve points to the toolpath
+        for (int i = 0; i < pl.Count(); i++) {
+            path->appendPoint(pl[i], ON_3dVector(0, 0, 1)); // tool vector is set to +Z for all points
+        }
+
+        // Set toolpath parameters
+        path->height = 0.2;
+        path->width = 0.5;
+        path->speed = 40;
+
+        // Add this path to the list of generated toolpaths.
+        // CamBase takes ownership.
+        m_toolpaths.emplace_back(path);
+    }
+
+    return true;
 }
 
 Aion::OptionsGroups CamDemo::getOptionsByGroup()
