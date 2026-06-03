@@ -1,5 +1,7 @@
 # Aion-5X-plugin-sample
-Reference implementation of a Cam extension plugin for Aion-5X
+Reference implementation of a Cam extension plugin for Aion-5X.
+
+Documentation is available [here](https://documentation.kronos-mct.com/aion/api/cam-plugin).
 
 ## Build the plugin
 1. Install Rhino, Aion-5X, Rhino SDK and required developer tools: [Installing Tools (Windows)](https://developer.rhino3d.com/guides/cpp/installing-tools-windows/)
