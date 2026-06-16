@@ -32,7 +32,7 @@ Aion::CamBase* CamDemo::createNewInstance() const
     return result;
 }
 
-bool CamDemo::generateToolpath(const Aion::DrawingConfig* config, Aion::Errorlist& errors)
+bool CamDemo::generateToolpath(Aion::Errorlist& errors)
 {
     // clear existing paths
     m_toolpaths.clear();
@@ -56,7 +56,7 @@ bool CamDemo::generateToolpath(const Aion::DrawingConfig* config, Aion::Errorlis
     }
 
     // Get the tool config to to access tool specific parameters
-    const Aion::ToolConfig* tool_config = config->getTool(m_tool->getString());
+    const Aion::ToolConfig* tool_config = getConfig()->getTool(m_tool);
     if (!tool_config) {
         errors.push_back(Aion::Error(Aion::ErrorClass::Critical, "Tool not found in config"));
         // No valid result, return false -> gcode export not possible
@@ -70,7 +70,7 @@ bool CamDemo::generateToolpath(const Aion::DrawingConfig* config, Aion::Errorlis
         ON_Polyline pl;
 
         // Try to extract a polyline (sequence of linear segments) from the curve.
-        if (Aion::Geometry5X::getPolylineCurveFromComponent(comp, pline, config->machineConfig().path_deviation_tolerance())) {
+        if (Aion::Geometry5X::getPolylineCurveFromComponent(comp, pline, getConfig()->machineConfig().path_deviation_tolerance())) {
             pl = pline.m_pline;
             // Return when polyline is invalid or has a length of 0
             if (!pl.IsValid() || pl.Count() == 0) {

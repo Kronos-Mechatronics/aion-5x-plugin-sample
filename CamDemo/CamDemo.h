@@ -19,7 +19,7 @@ public:
     virtual Aion::CamBase* createNewInstance() const override;
 
     // generate Toolpath of the contour CAM block
-    bool generateToolpath(const Aion::DrawingConfig* config, Aion::Errorlist& errors) override;
+    bool generateToolpath(Aion::Errorlist& errors) override;
     // Expose options of this cam block to UI
     Aion::OptionsGroups getOptionsByGroup() override;
     // callback for when an option was changed in the UI.
